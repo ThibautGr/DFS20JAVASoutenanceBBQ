@@ -105,4 +105,17 @@ public class BarbecueController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Barbecue> putBarbecue(@PathVariable int id, @RequestBody Barbecue barbecue){
+        Barbecue modifiedBarbecue = barbecueDao.findById(id);
+        if (modifiedBarbecue == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        modifiedBarbecue.setId(id);
+        modifiedBarbecue = barbecueDao.save(barbecue);
+        return new ResponseEntity<>(modifiedBarbecue, HttpStatus.OK);
+    }
+
+
+
 }
