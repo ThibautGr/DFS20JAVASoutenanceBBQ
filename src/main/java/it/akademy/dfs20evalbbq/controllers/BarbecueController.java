@@ -101,7 +101,6 @@ public class BarbecueController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         barbecueDao.deleteById(id);
-        System.out.println("inside delete method");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -111,7 +110,7 @@ public class BarbecueController {
         if (modifiedBarbecue == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        modifiedBarbecue.setId(id);
+        barbecue.setId(id);
         modifiedBarbecue = barbecueDao.save(barbecue);
         return new ResponseEntity<>(modifiedBarbecue, HttpStatus.OK);
     }
