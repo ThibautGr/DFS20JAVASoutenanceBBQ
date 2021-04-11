@@ -1,10 +1,8 @@
 package it.akademy.dfs20evalbbq.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Aliment {
@@ -14,6 +12,17 @@ public class Aliment {
     private int id;
     private String name;
 
+    /*
+        relation externe
+     */
+
+    @JsonBackReference(value = "barbecue-aliments")
+    @ManyToOne
+    private Barbecue barbecue;
+
+    @JsonBackReference(value = "person-aliment")
+    @ManyToOne
+    private Person person;
 
     public Aliment(){};
 
@@ -36,5 +45,23 @@ public class Aliment {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public void setBarbecue(Barbecue barbecue) {
+
+        this.barbecue = barbecue;
+    }
+    public Barbecue getBarbecue() {
+
+        return barbecue;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }

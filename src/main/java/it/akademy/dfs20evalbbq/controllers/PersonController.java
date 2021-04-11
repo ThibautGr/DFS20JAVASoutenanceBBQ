@@ -1,6 +1,9 @@
 package it.akademy.dfs20evalbbq.controllers;
 
+import it.akademy.dfs20evalbbq.dao.AlimentDao;
+import it.akademy.dfs20evalbbq.dao.BarbecueDao;
 import it.akademy.dfs20evalbbq.dao.PersonDao;
+import it.akademy.dfs20evalbbq.models.Aliment;
 import it.akademy.dfs20evalbbq.models.Barbecue;
 import it.akademy.dfs20evalbbq.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +19,14 @@ import java.util.List;
 public class PersonController {
 
     private final PersonDao personDao;
-
+    private final AlimentDao alimentDao;
+    private final BarbecueDao barbecueDao;
 
     @Autowired
-    public PersonController(PersonDao personDao) {
+    public PersonController(PersonDao personDao, AlimentDao alimentDao, BarbecueDao barbecueDao) {
         this.personDao = personDao;
+        this.alimentDao = alimentDao;
+        this.barbecueDao = barbecueDao;
     }
 
 
@@ -53,16 +59,48 @@ public class PersonController {
         return new ResponseEntity<>(person,HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Person> putPerson(@PathVariable int id, @RequestBody Person person){
-        Person modifedPerson = personDao.findById(id);
-        System.out.println("inside Put method");
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Person> putPerson(@PathVariable int id, @RequestBody Person person){
+//        Person modifedPerson = personDao.findById(id);
+//        System.out.println("inside Put method");
+//
+//        if(modifedPerson == null){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        person.setId(id);
+//        modifedPerson = personDao.save(person);
+//        return new ResponseEntity<>(modifedPerson, HttpStatus.OK);
+//    }
+
+    @PutMapping("/{personId}/aliment/{alimentid}")
+    public ResponseEntity<Person> addAlimentsInPerson(@PathVariable int personId, @PathVariable int alimentid){
+
+        Person modifedPerson = personDao.findById(personId);
 
         if(modifedPerson == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        person.setId(id);
-        modifedPerson = personDao.save(person);
+
+        Aliment alimentToAdd = alimentDao.findById(alimentid);
+
+        if(alimentToAdd == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if(modifedPerson.getBarbecue() != null){
+            Barbecue barbecueQuiReçois = barbecueDao.findById(modifedPerson.getBarbecue().getId());
+
+            barbecueQuiReçois.getAliments().add(alimentToAdd);
+            barbecueDao.save(barbecueQuiReçois);
+
+        }
+
+
+
+        modifedPerson.getAliments().add(alimentToAdd);
+        alimentToAdd.setPerson(modifedPerson);
+        modifedPerson.setId(personId);
+        personDao.save(modifedPerson);
         return new ResponseEntity<>(modifedPerson, HttpStatus.OK);
     }
 

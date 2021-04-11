@@ -2,7 +2,9 @@ package it.akademy.dfs20evalbbq.controllers;
 
 
 import it.akademy.dfs20evalbbq.dao.BarbecueDao;
+import it.akademy.dfs20evalbbq.dao.PersonDao;
 import it.akademy.dfs20evalbbq.models.Barbecue;
+import it.akademy.dfs20evalbbq.models.Person;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,19 +19,22 @@ public class BarbecueController {
 
     private final BarbecueDao barbecueDao;
 
+    private  final PersonDao personDao;
+
     @Autowired
-    public BarbecueController(BarbecueDao barbecueDao) {
+    public BarbecueController(BarbecueDao barbecueDao, PersonDao personDao) {
         this.barbecueDao = barbecueDao;
+        this.personDao = personDao;
     }
 
     /*
      *Read all
      */
-//    @GetMapping
-//    public ResponseEntity<List<Barbecue>> getAllBarbecue(){
-//        List<Barbecue> barbecues= barbecueDao.findAll();
-//        return new ResponseEntity<>(barbecues, HttpStatus.OK);
-//    }
+    @GetMapping
+    public ResponseEntity<List<Barbecue>> getAllBarbecue(){
+        List<Barbecue> barbecues= barbecueDao.findAll();
+        return new ResponseEntity<>(barbecues, HttpStatus.OK);
+    }
     /*
      * Create
      */
@@ -64,16 +69,16 @@ public class BarbecueController {
     /*
      *Read all or one by name
      */
-    @GetMapping
-    public ResponseEntity<List<Barbecue>> getAllBarbecueById(@RequestParam(required = false) String name){
-        List<Barbecue> barbecues;
-        if(name == null){
-            barbecues = barbecueDao.findAll();
-            return new ResponseEntity<>(barbecues, HttpStatus.OK);
-        }
-        barbecues = barbecueDao.findAllByName(name);
-        return new ResponseEntity<>(barbecues,HttpStatus.OK);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<Barbecue>> getAllBarbecueById(@RequestParam(required = false) String name){
+//        List<Barbecue> barbecues;
+//        if(name == null){
+//            barbecues = barbecueDao.findAll();
+//            return new ResponseEntity<>(barbecues, HttpStatus.OK);
+//        }
+//        barbecues = barbecueDao.findAllByName(name);
+//        return new ResponseEntity<>(barbecues,HttpStatus.OK);
+//    }
 //    @GetMapping("/namedecon/{name}")
 //    public ResponseEntity<List<Barbecue>> getAllBarbecueById(@PathVariable String name){
 //        List<Barbecue> barbecues = barbecueDao.findAllByName(name);
@@ -104,16 +109,38 @@ public class BarbecueController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Barbecue> putBarbecue(@PathVariable int id, @RequestBody Barbecue barbecue){
-        Barbecue modifiedBarbecue = barbecueDao.findById(id);
-        if (modifiedBarbecue == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        barbecue.setId(id);
-        modifiedBarbecue = barbecueDao.save(barbecue);
-        return new ResponseEntity<>(modifiedBarbecue, HttpStatus.OK);
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Barbecue> putBarbecue(@PathVariable int id, @RequestBody Barbecue barbecue){
+//        Barbecue modifiedBarbecue = barbecueDao.findById(id);
+//        if (modifiedBarbecue == null){
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//        barbecue.setId(id);
+//        modifiedBarbecue = barbecueDao.save(barbecue);
+//        return new ResponseEntity<>(modifiedBarbecue, HttpStatus.OK);
+//    }
+
+    @PutMapping("/{bbqId}/person/{personId}")
+    public ResponseEntity<Barbecue> invitePersonInBbq(@PathVariable int bbqId, @PathVariable int personId){
+     Barbecue barbecue = barbecueDao.findById(bbqId);
+
+     if (barbecue == null){
+         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+     }
+
+        Person person = personDao.findById(personId);
+
+     if (person == null){
+         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+     }
+
+     barbecue.getPersons().add(person);
+     person.setBarbecue(barbecue);
+     barbecueDao.save(barbecue);
+     return new ResponseEntity<>(barbecue, HttpStatus.OK);
+
     }
+
 
 
 

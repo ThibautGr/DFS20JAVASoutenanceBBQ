@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 
-@RequestMapping("/Aliments")
+@RequestMapping("/aliments")
 public class AlimentController {
     private final AlimentDao alimentDao;
 
