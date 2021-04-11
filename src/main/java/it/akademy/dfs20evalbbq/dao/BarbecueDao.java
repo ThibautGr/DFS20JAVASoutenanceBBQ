@@ -1,8 +1,7 @@
 package it.akademy.dfs20evalbbq.dao;
 
-import it.akademy.dfs20evalbbq.models.Aliment;
-import it.akademy.dfs20evalbbq.models.Barbecue;
-import it.akademy.dfs20evalbbq.models.Person;
+import it.akademy.dfs20evalbbq.models.*;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

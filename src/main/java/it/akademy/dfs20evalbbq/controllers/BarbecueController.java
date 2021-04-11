@@ -116,14 +116,12 @@ public class BarbecueController {
 
     @PutMapping("/{bbqId}/person/{personId}")
     public ResponseEntity<Barbecue> invitePersonInBbq(@PathVariable int bbqId, @PathVariable int personId){
-     Barbecue barbecue = barbecueDao.findById(bbqId);
 
+        Barbecue barbecue = barbecueDao.findById(bbqId);
      if (barbecue == null){
          return new ResponseEntity<>(HttpStatus.NOT_FOUND);
      }
-
         Person person = personDao.findById(personId);
-
      if (person == null){
          return new ResponseEntity<>(HttpStatus.NOT_FOUND);
      }
