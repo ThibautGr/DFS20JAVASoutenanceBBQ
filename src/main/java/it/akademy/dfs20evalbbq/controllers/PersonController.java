@@ -49,14 +49,31 @@ public class PersonController {
         return new ResponseEntity<>(persons,HttpStatus.OK);
   }
 
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<?> deletePersonn(@PathVariable int id){
+//        Person person = personDao.findById(id);
+//        if (person == null){
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        }
+//        personDao.deleteById(id);
+//        return new ResponseEntity<>(person,HttpStatus.NO_CONTENT);
+//    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePersonn(@PathVariable int id){
+    public ResponseEntity<?> deletePerson(@PathVariable int id){
         Person person = personDao.findById(id);
         if (person == null){
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Barbecue> barbecues = barbecueDao.findAllByPersons(person);
+        if (barbecues != null){
+            for (Barbecue barbecue: barbecues){
+                barbecue.getPersons().removeIf(person1 -> person1.getId() == id);
+                barbecueDao.save(barbecue);
+            }
         }
         personDao.deleteById(id);
-        return new ResponseEntity<>(person,HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 //    @PutMapping("/{id}")
@@ -94,8 +111,6 @@ public class PersonController {
             barbecueDao.save(barbecueQuiReçois);
 
         }
-
-
 
         modifedPerson.getAliments().add(alimentToAdd);
         alimentToAdd.setPerson(modifedPerson);

@@ -30,34 +30,18 @@ public class BarbecueController {
     /*
      *Read all
      */
-    @GetMapping
-    public ResponseEntity<List<Barbecue>> getAllBarbecue(){
-        List<Barbecue> barbecues= barbecueDao.findAll();
-        return new ResponseEntity<>(barbecues, HttpStatus.OK);
-    }
-    /*
-     * Create
-     */
-    @PostMapping
-    public ResponseEntity<Barbecue> createBarbecue(@RequestBody Barbecue barbecue){
-        Barbecue addedBarbecue = barbecueDao.save(barbecue);
-        return new ResponseEntity<>(addedBarbecue, HttpStatus.CREATED);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<Barbecue>> getAllBarbecue(){
+//        List<Barbecue> barbecues= barbecueDao.findAll();
+//        return new ResponseEntity<>(barbecues, HttpStatus.OK);
+//    }
 
 
     /*
     *Read one by id
      */
 
-//    @GetMapping("/?id={id}") // fonctionne pas renvois un array avec tout les barbeuc dedans je sais pas pourquoi grosfun
-//    public ResponseEntity<Barbecue> getBarbecueById(@PathVariable int id){
-//        Barbecue barbecue = barbecueDao.findById(id);
-//        if(barbecue == null){
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity<>(barbecue, HttpStatus.OK);
-//    }
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<Barbecue> getBarbecueById(@PathVariable int id){
         Barbecue barbecue = barbecueDao.findById(id);
         if(barbecue == null){
@@ -69,21 +53,31 @@ public class BarbecueController {
     /*
      *Read all or one by name
      */
-//    @GetMapping
-//    public ResponseEntity<List<Barbecue>> getAllBarbecueById(@RequestParam(required = false) String name){
-//        List<Barbecue> barbecues;
-//        if(name == null){
-//            barbecues = barbecueDao.findAll();
-//            return new ResponseEntity<>(barbecues, HttpStatus.OK);
-//        }
-//        barbecues = barbecueDao.findAllByName(name);
-//        return new ResponseEntity<>(barbecues,HttpStatus.OK);
-//    }
+    @GetMapping
+    public ResponseEntity<List<Barbecue>> getAllBarbecueById(@RequestParam(required = false) String name){
+        List<Barbecue> barbecues;
+        if(name == null){
+            barbecues = barbecueDao.findAll();
+            return new ResponseEntity<>(barbecues, HttpStatus.OK);
+        }
+        barbecues = barbecueDao.findAllByName(name);
+        return new ResponseEntity<>(barbecues,HttpStatus.OK);
+    }
 //    @GetMapping("/namedecon/{name}")
 //    public ResponseEntity<List<Barbecue>> getAllBarbecueById(@PathVariable String name){
 //        List<Barbecue> barbecues = barbecueDao.findAllByName(name);
 //        return new ResponseEntity<>(barbecues,HttpStatus.OK);
 //    }
+
+
+    /*
+     * Create
+     */
+    @PostMapping
+    public ResponseEntity<Barbecue> createBarbecue(@RequestBody Barbecue barbecue){
+        Barbecue addedBarbecue = barbecueDao.save(barbecue);
+        return new ResponseEntity<>(addedBarbecue, HttpStatus.CREATED);
+    }
 
     /*
     *Delete
