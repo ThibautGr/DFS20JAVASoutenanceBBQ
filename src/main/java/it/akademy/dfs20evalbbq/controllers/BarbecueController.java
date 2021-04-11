@@ -2,8 +2,10 @@ package it.akademy.dfs20evalbbq.controllers;
 
 
 import it.akademy.dfs20evalbbq.dao.BarbecueDao;
+import it.akademy.dfs20evalbbq.dao.CityDao;
 import it.akademy.dfs20evalbbq.dao.PersonDao;
 import it.akademy.dfs20evalbbq.models.Barbecue;
+import it.akademy.dfs20evalbbq.models.City;
 import it.akademy.dfs20evalbbq.models.Person;
 import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,13 @@ public class BarbecueController {
 
     private  final PersonDao personDao;
 
+    private final CityDao cityDao;
+
     @Autowired
-    public BarbecueController(BarbecueDao barbecueDao, PersonDao personDao) {
+    public BarbecueController(BarbecueDao barbecueDao, PersonDao personDao, CityDao cityDao) {
         this.barbecueDao = barbecueDao;
         this.personDao = personDao;
+        this.cityDao = cityDao;
     }
 
     /*
@@ -98,6 +103,16 @@ public class BarbecueController {
         Barbecue barbecue = barbecueDao.findById(id);
         if (barbecue == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<City> cities = cityDao.findAllByBarbecues(barbecue);
+        if (cities == null){
+            barbecueDao.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        for (City city: cities){
+            city.getBarbecues().removeIf(barbecue1 -> barbecue1.getId()==id);
+            cityDao.save(city);
         }
         barbecueDao.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
